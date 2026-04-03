@@ -1,49 +1,63 @@
-import styled from "styled-components";
+// import styled from "styled-components";
 import { useState } from "react";
 
-const Billing = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  gap: 80px;
-`;
-
-const Tipping = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  gap: 80px;
-`;
-
 function App() {
-  const [total, setTotal] = useState(80);
-  const [rating, setRating] = useState(null)
+  const [bill, setBill] = useState(null);
+  const [rating1, setRating1] = useState(0);
+  const tip = (bill / 100) * rating1
+  const total = bill + tip;
   return (
-    <div className="container">
-      <h1>Welcome</h1>
-      <Billing>
-        <p>How much was the bill?</p>
-        <input value={total} type="number" />
-      </Billing>
-      <Tipping>
-        <p>How did you like the service?</p>
-        <select>
-          <option value="low">Dissatisfied (0%)</option>
-          <option value="medium">Medium (5%)</option>
-          <option value="well">Well (10%)</option>
-        </select>
+    <div>
+      <Billing bill={bill} onSetBill={setBill} />
+      <Tipping rating={rating1} onSetRating={setRating1}>
+        How did you like the service?
       </Tipping>
-      <Tipping>
-        <p>How did your friend like the service?</p>
-        <select>
-           <option value="low">Dissatisfied (0%)</option>
-          <option value="medium">Medium (5%)</option>
-          <option value="well">Well (10%)</option>
-        </select>
-      </Tipping>
-      <p>Total: ${total} </p>
+      <Total bill={bill} total={total} percentage={rating1} />
+      <Resetting />
     </div>
   );
 }
 
 export default App;
+
+function Billing({ bill, onSetBill }) {
+  return (
+    <div>
+      <label>How much was the bill?</label>
+      <input
+        value={bill}
+        type="number"
+        onChange={(e) => onSetBill(Number(e.target.value))}
+      />
+    </div>
+  );
+}
+
+function Tipping({ rating, onSetRating, children }) {
+  return (
+    <div>
+      <label>{children}</label>
+      <select
+        value={rating}
+        onChange={(e) => onSetRating(Number(e.target.value))}
+      >
+        <option value="0">Bad 0%</option>
+        <option value="5">Okay 5%</option>
+        <option value="10">Good 10%</option>
+        <option value="15">Perfect 15%</option>
+      </select>
+    </div>
+  );
+}
+
+function Total({ total, bill, percentage }) {
+  return (
+    <div>
+      <h3>
+        Total: {total} ( ${bill} + {percentage} % )
+      </h3>
+    </div>
+  );
+}
+
+function Resetting() {}
